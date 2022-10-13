@@ -138,14 +138,30 @@ print(trails_no_outliers)
     - What are the values of `class` in the dataset? Show the code and output to support your answer. 
     - What do you think is the most likely reason for the missing observations of `class`? In other words, what does a missing value of `class` indicate? 
 
+```{r eval = FALSE}
+ggplot(data = trails_no_outliers, mapping = aes(x = as.factor(class), y = length)) +
+  geom_boxplot()
+```
+
+    The variable "class" can take on the discrete values of 1, 2, 3, and 4. I believe that the reason why a missing "class" observation may take place is because of human error or because of difficulties classifying a particular stretch of the Bay Trail.
+
 9. Complete the code below to impute (i.e. fill in) the missing values of `class` with the appropriate value. After that, eliminate all the observations from class = 3, since we are not going to use them. Then, display the distribution of `class` to check that the missing values were correctly imputed.
 
 ```{r eval=FALSE}
-__________ <- __________ %>% filter(class !=3) %>% 
-  mutate(class = if_else(is.na(class),______,class)) 
+trails_no_class_3 <- trails_no_outliers %>% filter(class !=3) %>% 
+  mutate(class = if_else(is.na(class),3,class))
+
+ggplot(data = trails_no_class_3, mapping = aes(x = as.factor(class), y = length)) +
+  geom_boxplot()
 ```
 
 10. Now that we've completed the univariate EDA (i.e. examining one variable at a time), let's examine the relationship between the length of the trail and its class variable. Make a graph to visualize the relationship between `length` and `class` and calculate the appropriate summary statistics. Include informative axis labels and title on your graph.
+
+```{r eval = FALSE}
+ggplot(data = trails_no_class_3) +
+  geom_histogram(mapping = aes(x = class), binwidth = 0.5) +
+  labs(title = "Number of Trails per Class")
+```
 
 11. Describe the relationship between `length` and `class`. In other words, describe how the distribution of `length` compares between trails that have different classes (1 = shared use bicycle and pedestrian path, 2 = bike lane, and 3 = bike route). Include information from the graph and summary statistics from the previous exercise in your response.
 
@@ -163,7 +179,10 @@ Over the next few questions, will use statistical inference to assess whether th
     - **Sample Size**
     - **Independent Groups**
 
-13. While we have observed a small difference in the mean length in trails with bike lanes (class = 2) and trials that share bikes with pedestrians (class = 1), let's assess if there is enough evidence to consider the difference "statistically significant" or if it appears to be due to random chance. 
+  I believe that it is reasonable to assume that there is independence inside each group. I don't think that the construction or choosing to build a particular class trail would influence the choice to build other similar trails. Secondly, the sample size condition (that is that the sample sizes of each group is greater than or equal to 30) is more than satisfied. Thirdly and lastly, the independence between groups is also satisfied. Once again, I believe that the choice of constructing a particular class of trail has little to no bearing on the choice to build or construct another type of trail.
+
+13. While we have observed a small difference in the mean length in trails with bike lanes (class = 2) and trials that share bikes with pedestrians (class = 1), let's assess if there is enough evidence to consider the difference "statistically significant" or if it appears to be due to random chance.
+
 
 The null and alternative hypotheses are written in statistical notation below. State the hypotheses in words in the context of this analysis.  
 
@@ -176,18 +195,21 @@ H_a: \mu_1 - \mu_2 \neq 0$$
 
 ```{r eval = FALSE}
 ?t.test # to see the help page from the function
-t.test(response ~ group_var, data = ________, 
-       alternative = "___________", 
+t.test(response ~ group_var, data = trails_no_class_3, 
+       alternative = "There is non-zero difference between the mean length of trails that share space between bicycle and pedestrian usage", 
        conf.level = 0.99) #less, greater, or two.sided
 ```
 
 15. Use the output from the previous exercise to answer the following: 
     - Write the definition of the test statistic in the context of this analysis.
     - Write the definition of the p-value in the context of this analysis. 
-    - State your conclusion in the context of this analysis. Use a significance level of $\alpha = 0.01$. 
+    - State your conclusion in the context of this analysis. Use a significance level of $\alpha = 0.01$.
+    
+
+    The test statistic is 
 
 16. Notice the confidence interval for the difference in mean trail length printed in the output from Exercise 14. Interpret this confidence interval in the context of this analysis. 
 
 *You're done and ready to submit your work! Knit, commit, and push all remaining changes. You can use the commit message "Done with Lab 1!", and make sure you have pushed all the files to GitHub (your Git pane in RStudio should be empty) and that<u>all</u> documents are updated in your repo on GitHub. Then submit the pdf for your assignment on Gradescope. Include your repo name, so I can check your commits.*
 
-
+My GitHub for this lab can be found at the following link: https://github.com/CrazedItalianMan/lab-01-STAT-108
