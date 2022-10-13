@@ -20,7 +20,7 @@ Today's data comes from the [Metropolitan Transportation Commission (MTC) Open D
 In this lab, we will focus on data about the existing and planned segments of the San Francisco Bay trail. The data is located in the *SFO_trails.csv* file located in the *data* folder. Use the code below to read in the .csv file and save it in the RStudio environment as a data frame called `trails`.
 
 ```{r read-data, eval=FALSE}
-trails <- read_csv("data/SFO-trails.csv")
+trails <- read_csv("SFO-trails.csv")
 ```
 
 A full list of the variables in the dataset is available  [here](https://opendata.mtc.ca.gov/datasets/MTC::san-francisco-bay-trail/about). For today's analysis, we will primarily focus on the following variables: 
@@ -48,6 +48,7 @@ View(trails)
 
     How many observations are in the `trails` dataset? How many variables?
 
+    There are 739 observations and 12 different variables. This corresponds to the 739 rows and 12 columns in the dataset, respectively.
   
 ```{r eval = F}
 glimpse(trails)
@@ -62,25 +63,25 @@ glimpse(trails)
 
 ```{r eval=FALSE}
 ggplot(data = trails, aes(x = status)) + 
-  __________ + 
-  labs(x = "_________", 
-       y = "_________", 
-       title = "__________")
+  aes(y = county) + 
+  labs(x = "Trail Completion Status", 
+       y = "County", 
+       title = "Trail Completion Status Per County")
 ```
 
 
 
 ```{r eval = FALSE}
 trails %>%
-  count(_____) %>%
+  count(status) %>%
   mutate(proportion = n / sum(n))
 ```
 
 3. Since we want to analyze characteristics for trails in the Bay Area, we will just use data from currently existing trails for the remainder of the analysis. Complete the code below to use the `filter` function to create a subset consisting only of trails that currently exist and have a value reported for `length`. Assign the subset the name `current_trails`. (*Hint: There should be 493 observations in current_trails.*)
 
 ```{r eval = F}
-__________ <- trails %>%
-  filter(status == "______", !is.na(______))
+current_trails <- trails %>%
+  filter(status == "Existing", !is.na(length))
 ````
 
 
