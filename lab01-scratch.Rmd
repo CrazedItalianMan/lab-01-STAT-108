@@ -62,12 +62,11 @@ glimpse(trails)
     - Then, calculate the proportion of observations in each category of `status` by completing the code below.
 
 ```{r eval=FALSE}
-ggplot(data = trails, aes(x = status)) + 
-  aes(y = county) + 
-  labs(x = "Trail Completion Status", 
-       y = "County", 
-       title = "Trail Completion Status Per County")
+ggplot(data = trails, aes(x = status, y = size_sum(county))) + 
+  geom_bar(stat = "identity") + labs(x = "Trail Completion Status",
+       title = "Trail Completion Status")
 ```
+
 
 
 
@@ -95,10 +94,11 @@ current_trails <- trails %>%
 
 ```{r eval = F}
 ggplot(data = current_trails) +
-  geom_histogram(mapping = aes(x = _____), binwidth = 0.5)
+  geom_histogram(mapping = aes(x = length), binwidth = 0.5) +
+  labs(title = "Number of Trails at Particular Lengths")
 
-ggplot(data = current_trails, mapping = aes(x = as.factor(class), y = _____)) +
-  geom_boxplot()
+ggplot(data = current_trails, mapping = aes(x = length)) + 
+  geom_boxplot() + labs(title = "Boxplot of Trail Length")
 ```
 
 See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/exploratory-data-analysis.html#introduction-3) or the [ggplot2 reference page](https://ggplot2.tidyverse.org/reference/index.html) for details and example code.
@@ -107,22 +107,30 @@ See [Section 7.3.1 "Visualizing Distributions"](https://r4ds.had.co.nz/explorato
 
 ```{r eval = FALSE}
 current_trails %>%
-  summarise(min = __________, 
-            q1 = __________, 
-            median = __________, 
-            q3 = __________, 
-            max = __________, 
-            iqr = __________, 
-            mean = __________, 
-            std_dev = __________
+  summarise(min = min(length), 
+            q1 = quantile(length, 0.25), 
+            median = quantile(length, 0.50), 
+            q3 = quantile(length, 0.75), 
+            max = max(length), 
+            iqr = IQR(length), 
+            mean = mean(length), 
+            std_dev = sd(length)
             )
 ```
 
 6. Describe the distribution of `length`. Your description should include comments about the shape, center, spread, and any potential outliers. Use the graph from Exercise 4 and relevant summary statistics from Exercise 5 in your description.
 
+    The shape of the distribution appears to be skewed right and is not normally distributed. The center of the distribution is located at around 0.72 which is to the right of the median (0.45). The spread of the distribution is wide. Outliers are defined to be any values that are either Q1 - 1.5 * IQR or Q3 + 1.5 * IQR. Therefore, values that are smaller than -0.8809001 or larger than 2.0257127 are outliers in the data. This concludes that 62 data points are considered outliers.
+
 7. We want to limit the analysis to trails that are more likely intended for day hikes, rather than multi-day hikes and camping. Therefore, let's remove the extreme outliers from the data for this analysis and only consider those trails that are 5 miles or shorter. 
 
-    Filter the dataset to remove the extreme outliers. **Be sure to save the updated dataset, so you can use it for the remainder of the lab.** 
+    Filter the dataset to remove the extreme outliers. **Be sure to save the updated dataset, so you can use it for the remainder of the lab.**
+  
+```{r eval = F}
+trails_no_outliers <- trails %>%
+  filter(length > 0 & length < 2.0257127)
+print(trails_no_outliers)
+````
     
 *This is a good place to knit, commit, and push changes to your remote lab-01 repo on GitHub. Be sure to write informative commit message (e.g. "Completed exercises 4 - 7"), and push every file to GitHub by clicking the checkbox next to each file in the Git pane. After you push the changes, the Git pane in RStudio should be empty."*
 
@@ -130,7 +138,7 @@ current_trails %>%
     - What are the values of `class` in the dataset? Show the code and output to support your answer. 
     - What do you think is the most likely reason for the missing observations of `class`? In other words, what does a missing value of `class` indicate? 
 
-9. Complete the code below to impute (i.e. fill in) the missing values of `class` with the appropriate value. After that, eliminate all the observations from class = 3, since we are not going to use the. Then, display the distribution of `class` to check that the missing values were correctly imputed.
+9. Complete the code below to impute (i.e. fill in) the missing values of `class` with the appropriate value. After that, eliminate all the observations from class = 3, since we are not going to use them. Then, display the distribution of `class` to check that the missing values were correctly imputed.
 
 ```{r eval=FALSE}
 __________ <- __________ %>% filter(class !=3) %>% 
@@ -161,6 +169,8 @@ The null and alternative hypotheses are written in statistical notation below. S
 
 $$H_0: \mu_1 - \mu_2 = 0 \\
 H_a: \mu_1 - \mu_2 \neq 0$$
+
+    The Null Hypothesis is that there is no difference between the mean length of trails that share space between bicycle and pedestrian usage. The Alternative Hypothesis is that there is a non-zero difference between the mean length of trails that share space between bicycle and pedestrian usage.
 
 14. Fill in the code below to use the `t.test` function to calculate the test statistic and p-value. Replace `response` with the variable we're interested in drawing conclusions about and `group_var` with the variable used to define the two groups.
 
